@@ -1,4 +1,6 @@
-// PROG3.max - Joshua Gregory
+// CompareIncrement.max - Joshua Gregory (Feb. 2024)
+// Takes two inputs, compares their values, compute a sum, and increment the sum until it's greater than the first input value.
+
 Start,      Clear                // Start program, Set AC = 0
             Store      Sum       // Set Sum = AC (0)
 
