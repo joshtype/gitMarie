@@ -1,0 +1,31 @@
+// PROG3.max - Joshua Gregory
+Start,      Clear                // Start program, Set AC = 0
+            Store      Sum       // Set Sum = AC (0)
+
+// Input Max. If Max == 0, halt. Else output Max.
+            Input
+            Store      Max       // Set Max = AC            // Max = 50
+            SkipCond   800       // Skip next if Max > 0    // 50 > 0
+            Halt                 // Halt if Max <= 0        // skipped
+            Output     Max       // If Max > 0, Output Max  // output 50
+
+// Input Incr. Incr + Max = Sum. Output Sum.
+incLoop,    Input
+            Store      Incr      // Set Incr = AC            // Incr = 25
+            Add        Sum       // AC = Incr + Sum          // 25 + 0
+            Store      Sum       // Sum = AC                 // Sum = 25
+            Output     Sum
+            
+// If Sum - Max < 0, then Sum < Max still.
+            Load       Sum       // AC = Sum                 // 25
+            Sub        Max       // AC = Sum - Max           // 25-50=-25
+            SkipCond   000       // Skip next if AC < 0 (ie Sum < Max)
+            Jump       Start     // Reloop if Sum > Max
+            Jump       incLoop   // Reloop if Sum < Max
+                 
+
+// Declarations
+Max,        Dec        000
+Incr,       Dec        000
+Sum,        Dec        000
+            End        Start
