@@ -1,0 +1,23 @@
+// Subroutine Practice - Joshua Gregory (Feb 2024)
+
+Start,         Input
+               SkipCond      800
+               Halt                  // halt if input !> 0
+               Store         X
+               Input
+               Store         Y
+               JnS           AddX    // jump to subroutine
+               Store         Z       // executes from here after subroutine
+               Output
+               Jump          Start
+
+// subroutine
+AddX,          Hex           0       // jumps and skips this line
+               Add           X       // executes from here when called
+               JumpI         AddX    // exit subroutine
+
+X,             Dec           0
+Y,             Dec           0
+Z,             Dec           0
+
+               End           Start
