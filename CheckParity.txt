@@ -1,0 +1,105 @@
+// CheckParity.max - Joshua Gregory (Feb. 2024)
+    // Input A & B, where A <= 94, B <= A. Halt if A input == 0.
+    // B + 4 = S. If S is odd, add S + 1 to make S even.
+    // A - S = N. Ouput each variable. Repeat until A input == 0.
+
+Start,        Clear
+              Input
+              JnS            CheckIn      // Subr 0: Halt if input == 0
+              Store          A
+              JnS            CheckA       // Subr 1: Check if A <= 94
+              Input
+              Store          B
+              JnS            CheckB       // Subr 2: Check if B <= A
+              JnS            Add4         // Subr 3: Sum B + 4
+              JnS            CheckPar     // Subr 4: Check S parity
+              JnS            SubtS        // Subr 5: Subtract A - S
+              JnS            LogVar       // Subr 6: Display variables
+              Jump           Start
+
+// SUBR 0: If input == 0, then halt, else continue:
+CheckIn,      Hex            0
+              SkipCond       800       // If input > 0,
+              SkipCond       400       // Else, if input == 0,
+              Jump           Return0   // Exit if input > 0 or != 0
+              Halt                     // Then halt
+Return0,      JumpI          CheckIn   // Continue  
+
+// SUBR 1: If A > upperbound of 94, then A = upper:
+CheckA,       Hex            0
+              Load           Upper
+              Sub            A            // AC = Upper - A
+              SkipCond       000          // If Upper - A < 0, then A > 94,
+              Jump           ReturnA      // Else, A <= 94, exit subroutine
+              Load           Upper        // Then set A = Upper
+              Store          A
+ReturnA,      JumpI          CheckA       // Continue
+
+// SUBR 2: If B > A, then B = A:
+CheckB,       Hex            0
+              Load           A
+              Sub            B            // AC = A - B
+              SkipCond       000          // If A - B < 0, then B > A
+              Jump           ReturnB      // else, B <= A & continue
+              Load           A
+              Store          B            // If B > A, set B = A
+ReturnB,      JumpI          CheckB       // Continue
+              
+
+// SUBR 3: B + 4 = S:
+Add4,         Hex           0
+              Load          B
+              Add           Four
+              Store         S
+              Store         S2            // To test S parity
+              JumpI         Add4          // Continue
+
+// SUBR 4: Determine S parity using S2:
+CheckPar,     Hex           0
+IfNeg,        SkipCond      000           // Start loop, check if S2 < 0
+              Jump          IfZero        // Else, check if S2 == 0
+              Jump          IsOdd         // Then Sub 5: negative parity
+
+IfZero,       SkipCond      400           // If S2 !< 0, check if S2 == 0
+              Jump          IsPos         // Else, S2 > 0
+              Jump          IsEven        // If S2 == 0, then S = even
+
+IsPos,        Sub           Two           // If S2 > 0, decrement by 2
+              Store         S2            // Update value
+              Jump          IfNeg         // Reloop
+
+IsOdd,        Load          S
+              Add           One
+              Store         S             // If S2 < 0, S = Odd, S += 1
+IsEven,       JumpI         CheckPar      // Continue
+
+// SUBR 5: A - S = N:
+SubtS,         Hex          0
+               Load         A
+               Sub          S
+               Store        N
+               JumpI        SubtS         // Continue
+
+// SUBR 6: Output each variable separately:
+LogVar,       Hex           0
+              Load          A
+              Output
+              Load          B
+              Output
+              Load          S
+              Output
+              Load          N
+              Output
+              JumpI         LogVar        // Continue
+
+// VARIABLE DECLARATIONS.
+A,            Dec           000
+B,            Dec           000
+N,            Dec           000
+S,            Dec           000
+S2,           Dec           000
+One,          Dec           001
+Two,          Dec           002
+Four,         Dec           004
+Upper,        Dec           094
+              End           Start
