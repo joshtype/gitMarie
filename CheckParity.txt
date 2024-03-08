@@ -1,98 +1,84 @@
-// CheckParity.max - Joshua Gregory (Feb. 2024)
-    // Input A & B, where A <= 94, B <= A. Halt if A input == 0.
-    // B + 4 = S. If S is odd, add S + 1 to make S even.
-    // A - S = N. Ouput each variable. Repeat until A input == 0.
+// PROG4.max - Joshua Gregory (Mar. 2024)
+    // Using only one Input OpCode, prompt input values for A, B. 
+    // Halt if A == 0. Reprompt for A or B if A > 94 or B > A.
+    // Add B + 4 to get value for S. Check S parity. If odd, add S + 1. 
+    // Sub A - S to get value for N. Print each variable separately.
+    // Restart program until A input == 0.
 
-Start,        Clear
-              Input
-              JnS            CheckIn      // Subr 0: Halt if input == 0
-              Store          A
-              JnS            CheckA       // Subr 1: Check if A <= 94
-              Input
-              Store          B
-              JnS            CheckB       // Subr 2: Check if B <= A
-              JnS            Add4         // Subr 3: Sum B + 4
-              JnS            CheckPar     // Subr 4: Check S parity
-              JnS            SubtS        // Subr 5: Subtract A - S
-              JnS            LogVar       // Subr 6: Display variables
-              Jump           Start
+Start,        JnS            GetA         // Subr 0: Halt if A <= 0, input A until A <= 94
+              JnS            GetB         // Subr 1: Input B until B <= A
+              JnS            Add4         // Subr 2: Sum B + 4 = S
+              JnS            CheckPar     // Subr 3: Check S parity
+              JnS            SubtS        // Subr 4: Sub A - S = N
+              JnS            LogVar       // Subr 5: Print vars
+              Jump           Start        // Restart until A == 0.
 
-// SUBR 0: If input == 0, then halt, else continue:
-CheckIn,      Hex            0
-              SkipCond       800       // If input > 0,
-              SkipCond       400       // Else, if input == 0,
-              Jump           Return0   // Exit if input > 0 or != 0
-              Halt                     // Then halt
-Return0,      JumpI          CheckIn   // Continue  
-
-// SUBR 1: If A > upperbound of 94, then A = upper:
-CheckA,       Hex            0
-              Load           Upper
+// SUBR 0a: Input A, halt if A <= 0, reloop if A > 94, cont if 0 < A <= 94:
+GetA,         Hex            0
+ReloopA,      Input
+              Store          A            // A = AC
+              SkipCond       800          // If A > 0,
+              Halt                        // Else: halt if A <= 0
+              Load           Upper        // Then, AC = 94
               Sub            A            // AC = Upper - A
-              SkipCond       000          // If Upper - A < 0, then A > 94,
-              Jump           ReturnA      // Else, A <= 94, exit subroutine
-              Load           Upper        // Then set A = Upper
-              Store          A
-ReturnA,      JumpI          CheckA       // Continue
+              SkipCond       000          // If AC < 0,
+              JumpI          GetA         // Else: 0 < A <= 94, exit subr
+              Jump           ReloopA      // Then A > 94, reloop
 
-// SUBR 2: If B > A, then B = A:
-CheckB,       Hex            0
-              Load           A
+// SUBR 1: Input B, reloop if B > A, cont if B <= A:
+GetB,         Hex            0
+ReloopB,      Input
+              Store          B            // B = AC
+              Load           A            // AC = A
               Sub            B            // AC = A - B
-              SkipCond       000          // If A - B < 0, then B > A
-              Jump           ReturnB      // else, B <= A & continue
-              Load           A
-              Store          B            // If B > A, set B = A
-ReturnB,      JumpI          CheckB       // Continue
-              
+              SkipCond       000          // If AC < 0,
+              JumpI          GetB         // Else: B <= A, exit subr
+              Jump           ReloopB      // Then B > A, reloop
 
-// SUBR 3: B + 4 = S:
+// SUBR 2: Add B + 4 to get value of S:
 Add4,         Hex           0
-              Load          B
-              Add           Four
-              Store         S
-              Store         S2            // To test S parity
-              JumpI         Add4          // Continue
+              Load          B             // AC = B
+              Add           Four          // AC = B + 4
+              Store         S             // S = AC
+              Store         S2            // Use S2 to find S parity
+              JumpI         Add4          // Exit subr
 
-// SUBR 4: Determine S parity using S2:
+// SUBR 3: If S2 = odd, then add S + 1, else continue:
 CheckPar,     Hex           0
 IfNeg,        SkipCond      000           // Start loop, check if S2 < 0
-              Jump          IfZero        // Else, check if S2 == 0
-              Jump          IsOdd         // Then Sub 5: negative parity
-
-IfZero,       SkipCond      400           // If S2 !< 0, check if S2 == 0
-              Jump          IsPos         // Else, S2 > 0
-              Jump          IsEven        // If S2 == 0, then S = even
-
+              Jump          IfZero        // Else: check if S2 == 0
+              Jump          IsOdd         // Then S2 < 0 so S = odd
+IfZero,       SkipCond      400           // S2 !< 0, check if S2 == 0
+              Jump          IsPos         // Else: S2 > 0
+              JumpI         CheckPar      // Then S = even, exit subr
 IsPos,        Sub           Two           // If S2 > 0, decrement by 2
-              Store         S2            // Update value
+              Store         S2            // Update S2
               Jump          IfNeg         // Reloop
+IsOdd,        Load          S             // S2 < 0 so S = odd
+              Add           One           // S += 1 so S = even
+              Store         S             // Update S
+              JumpI         CheckPar      // S = even, exit subr
 
-IsOdd,        Load          S
-              Add           One
-              Store         S             // If S2 < 0, S = Odd, S += 1
-IsEven,       JumpI         CheckPar      // Continue
+// SUBR 4: Sub A - S to get value of N:
+SubtS,        Hex           0
+              Load          A             // AC = A
+              Sub           S             // AC = A - S
+              Store         N             // N = AC
+              JumpI         SubtS         // Exit subr
 
-// SUBR 5: A - S = N:
-SubtS,         Hex          0
-               Load         A
-               Sub          S
-               Store        N
-               JumpI        SubtS         // Continue
-
-// SUBR 6: Output each variable separately:
+// SUBR 5: Output each variable separately:
 LogVar,       Hex           0
-              Load          A
+              Load          A             // AC = A
               Output
-              Load          B
+              Load          B             // AC = B
               Output
-              Load          S
+              Load          S             // AC = S
               Output
-              Load          N
+              Load          N             // AC = N
               Output
-              JumpI         LogVar        // Continue
+              JumpI         LogVar        // Exit subr
 
-// VARIABLE DECLARATIONS.
+// VARIABLE DECLARATIONS:
 A,            Dec           000
 B,            Dec           000
 N,            Dec           000
