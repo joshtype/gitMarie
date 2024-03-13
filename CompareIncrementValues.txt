@@ -1,32 +1,31 @@
 // CompareIncrement.max - Joshua Gregory (Feb. 2024)
-// Takes two inputs, compares their values, compute a sum, and increment the sum until it's greater than the first input value.
+    // Without any subroutines, take input, store as Max. Halt if Max <= 0.
+    // Compare Max vs Sum. If Sum < Max, take input Incr to increment Sum.
+    // Add Sum + Incr. Output each incremented Sum. Loop until Sum > Max.
+    // Restart program, halting if Max <= 0.
 
 Start,      Clear                // Start program, Set AC = 0
-            Store      Sum       // Set Sum = AC (0)
+            Store      Sum       // Sum = AC
 
-// Input Max. If Max == 0, halt. Else output Max.
-            Input
-            Store      Max       // Set Max = AC            // Max = 50
-            SkipCond   800       // Skip next if Max > 0    // 50 > 0
-            Halt                 // Halt if Max <= 0        // skipped
-            Output     Max       // If Max > 0, Output Max  // output 50
+            Input                // Get Max value
+            Store      Max       // Max = AC
+            SkipCond   800       // If Max > 0,
+            Halt                 // Else, halt if Max <= 0
+            Output     Max       // Output Max
 
-// Input Incr. Incr + Max = Sum. Output Sum.
-incLoop,    Input
-            Store      Incr      // Set Incr = AC            // Incr = 25
-            Add        Sum       // AC = Incr + Sum          // 25 + 0
-            Store      Sum       // Sum = AC                 // Sum = 25
-            Output     Sum
+incrLoop,   Input                // Get increment value
+            Store      Incr      // Incr = AC
+            Add        Sum       // Increment Sum
+            Store      Sum       // Sum += Incr
+            Output     Sum       // Output incremented sums
             
-// If Sum - Max < 0, then Sum < Max still.
-            Load       Sum       // AC = Sum                 // 25
-            Sub        Max       // AC = Sum - Max           // 25-50=-25
-            SkipCond   000       // Skip next if AC < 0 (ie Sum < Max)
-            Jump       Start     // Reloop if Sum > Max
-            Jump       incLoop   // Reloop if Sum < Max
-                 
+            Load       Sum       // AC = Sum
+            Sub        Max       // AC = Sum - Max
+            SkipCond   000       // If AC < 0,
+            Jump       Start     // Else, Sum > Max, restart
+            Jump       incLoop   // Then, Sum < Max, reloop
 
-// Declarations
+// Declarations:
 Max,        Dec        000
 Incr,       Dec        000
 Sum,        Dec        000

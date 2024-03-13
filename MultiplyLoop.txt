@@ -1,0 +1,103 @@
+// PROG5.max - Joshua Gregory (Mar. 2024)
+    // Take inputs for M1 & M2. Halt if M1 input == 0. M2 can be any integer.
+    // Inputs are factors for PROD. Get positive/absolute value for negative factors.
+    // Track number of negative factors. If 1 factor is negative, PROD is negative.
+    // Output original factors and product.
+
+Start,          JnS            GetMP1       // Input, halt if 0, sign, abs value if neg
+                JnS            GetMP2       // Input, sign, abs value if neg
+                JnS            MPY          // Multiply, product sign
+                JnS            LogVar       // Output factors & products
+                Jump           Start        // Restart
+// SUBR: PROMPT INPUT FOR MP1; HALT IF INPUT == 0; CALL GetSign IF INPUT != 0.
+GetMP1,         Hex            0
+                Input
+                SkipCond       400          // If input == 0,
+                Jump           NonZero      // Else, continue
+                Halt                        // Then, halt
+NonZero,        Store          MP1          // Domain: 0 < MP1 < 0
+                Store          PosMP1       // Update for cases of positive input
+                JnS            SignMP1      // Get sign of nonzero input
+                Store          PosMP1       // Re-update with abs value
+                JumpI          GetMP1       // Exit after PosNeg
+// SUBR: CALLED IN GetMP1; GET SIGN OF MP1, CALL AbsVal IF NEGATIVE.
+SignMP1,        Hex            0
+                SkipCond       000          // If factor < 0,
+                JumpI          SignMP1      // Else, factor = pos, exit
+                JnS            AbsVal       // Then, get abs value
+                JumpI          SignMP1      // Exit after AbsVal
+// SUBR: PROMPT INPUT FOR MP2; DETERMINE SIGN OF MP2, CALL AbsVal IF NEGATIVE.
+GetMP2,         Hex            0
+                Input
+                Store          MP2          // Domain: 0 <= MP2 <= 0
+                Store          PosMP2       // Update for cases of positive input
+                SkipCond       000          // If MP2 < 0,
+                JumpI          GetMP2       // Else, factor = pos, exit
+                JnS            AbsVal       // Then, get abs value
+                Store          PosMP2       // Re-update with abs value
+                JumpI          GetMP2       // Exit after AbsVal
+// SUBR: CALLED IN GetSign & GetMP2; GET ABSOLUTE VALUE OF NEGATIVE FACTORS.
+AbsVal,         Hex            0
+                Store          Temp         // Copy negative factor
+                Load           NumNeg       // Track number of negative factors
+                Add            One
+                Store          NumNeg                    
+                Load           Zero         // 0 - (-Temp) == 0 + (+Temp)
+                Sub            Temp
+                Store          Temp         // Store abs value to return
+                JumpI          AbsVal       // Exit with AC == abs value
+// SUBR: MULTIPLY (MP1 * MP2) BY ACCUMULATING (PosMP2 + PosMP2) OVER PosMP1 NUMBER LOOPS.
+MPY,            Hex            0
+                Load           PosMP2       // Use MP2 because it can be 0
+                Store          PROD1        // PROD1 = PosMP2 * 1  
+                SkipCond       800          // If PosMP2 > 0,
+                JumpI          MPY          // Else, MP2 == 0, PROD1 == 0, exit
+LoopSum,        Load           PosMP1       // Then, decrement MP2
+                Sub            One
+                Store          PosMP1       // PosMP1 -= 1
+                SkipCond       800          // If AC > 0,
+                Jump           PosNeg       // Else, AC <= 0, break loop
+                Load           PROD1        // Then, accumulate product
+                Add            PosMP2
+                Store          PROD1        // PROD1 = PROD1 + PosMP2
+                Jump           LoopSum      // Reloop
+PosNeg,         JnS            ProdSign     // Get product sign
+                JumpI          MPY          // Exit after ProdSign
+// SUBR: CALLED IN MPY; GET SIGN OF PRODUCT (POSITIVE UNLESS NumNeg == 1); RESET NEGATIVE FACTOR COUNT.
+ProdSign,       Hex            0
+                Load           NumNeg       // Max number negative factors
+                SkipCond       400          // If AC == 0,
+                Jump           Cont         // Else, 1+ neg factor, continue
+                Jump           IsPos        // Then, 0 neg factors, pos PROD1
+Cont,           Sub            One          // NumNeg - 1
+                SkipCond       400          // If AC == 0,
+                Jump           IsPos        // Else, 2 neg factors, pos PROD1
+                Jump           IsNeg        // Then, 1 neg factors, neg PROD1
+IsPos,          Load           Zero
+                Store          NumNeg       // Reset NumNeg = 0
+                JumpI          ProdSign     // Exit
+IsNeg,          Load           Zero
+                Store          NumNeg       // Reset NumNeg = 0
+                Sub            PROD1        // Get negative value
+                Store          PROD1        // Store signed product
+                JumpI          ProdSign     // Exit
+// SUBR: OUTPUT FACTORS AND PRODUCT.
+LogVar,         Hex            0
+                Load           MP1
+                Output
+                Load           MP2
+                Output
+                Load           PROD1
+                Output       
+                JumpI          LogVar
+// VARIABLE DECLARATIONS:
+MP1,            Dec            000
+PosMP1,         Dec            000
+MP2,            Dec            000
+PosMP2,         Dec            000
+PROD1,          Dec            000
+NumNeg,         Dec            000
+Temp,           Dec            000
+Zero,           Dec            000
+One,            Dec            001
+                End            Start
