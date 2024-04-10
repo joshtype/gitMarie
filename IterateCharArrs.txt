@@ -1,0 +1,102 @@
+// IterateCharArrs.max - Joshua Gregory (Apr 2024)
+    // Takes input, halts only if input <= 0, proceeds if input > 0.
+    // Hex codes of ASCII chars are sequentially stored, forming three strings arrays.
+    // From the address of the first char of each str arr, a subr iterates over the arr.
+    // With output set to ASCII & No Line Feeds, the hex at each idx is output as a char.
+    // No Line Feeds allows char at ea idx to output to one line as separate lines of text.
+    // Stops iterating the arr when idx = NULL & jumps to left side of new line (CR & LF).
+    // Restarts and continues to run until input <= 0.
+
+Start,       Input                  // Proceed if input > 0
+             SkipCond   800         // Halt when input <= 0
+             Halt
+             Load       Idx0Arr1    // AC = 1st char of Str1
+             JnS        IncrChar    // Output Str1 
+             Load       Idx0Arr2    // AC = 1st char of Str2
+             JnS        IncrChar    // Output Str2
+             Load       Idx0Arr3    // AC = 1st char of Str3
+             JnS        IncrChar    // Output Str3
+             Jump       Start       // Run program until input <= 0
+// SUBR: incr thru hex codes, like an arr, output char at nth idx, exit if null:
+IncrChar,    hex        0
+LoopChar,    Store      nth         // Store nth idx location
+             LoadI      nth         // Load data at nth idx
+             SkipCond   400
+             Jump       NextChar    // Get next char if nth != 0
+             JumpI      IncrChar    // Exit subr if nth = 0 (null)
+NextChar,    Output                 // Output value at nth idx
+             Load       nth         // AC = current idx location
+             Add        Incr        // Incr idx to nth += 1
+             Jump       LoopChar    // Loop to next char
+// Hex code array for string 1 ("Hello_World!"):
+Str1Arr,     hex        048         // H
+             hex        065         // e
+             hex        06C         // l
+             hex        06C         // l
+             hex        06F         // o
+             hex        05F         // _
+             hex        057         // W
+             hex        06F         // o
+             hex        072         // r
+             hex        06C         // l
+             hex        064         // d
+             hex        021         // !
+             hex        00D         // CR
+             hex        00A         // LF
+             hex        000         // NULL
+// Hex code array for string 2 ("From:_Josh_Gregory!"):
+Str2Arr,     hex        046         // F
+             hex        072         // r
+             hex        06F         // o
+             hex        06D         // m
+             hex        03A         // :
+             hex        05F         // _
+             hex        04A         // J
+             hex        06F         // o
+             hex        073         // s
+             hex        068         // h
+             hex        075         // u
+             hex        061         // a
+             hex        05F         // _
+             hex        047         // G
+             hex        072         // r
+             hex        065         // e
+             hex        067         // g
+             hex        06F         // o
+             hex        072         // r
+             hex        079         // y
+             hex        021         // !
+             hex        00D         // CR
+             hex        00A         // LF
+             hex        000         // null
+// Hex code array for string 3 ("Thank_You_Very_Much!"):
+Str3Arr,     hex        054         // T
+             hex        068         // h
+             hex        061         // a
+             hex        06E         // n
+             hex        06B         // k
+             hex        05F         // _
+             hex        059         // Y
+             hex        06F         // o
+             hex        075         // u
+             hex        05F         // _
+             hex        056         // V
+             hex        065         // e
+             hex        072         // r
+             hex        079         // y
+             hex        05F         // _
+             hex        04D         // M
+             hex        075         // u
+             hex        063         // c
+             hex        068         // h
+             hex        021         // !
+             hex        00D         // CR
+             hex        00A         // LF
+             hex        000         // null
+// Label Assignments & Var Directives:
+Idx0Arr1,    DSA        Str1Arr     // assign label for 1st idx of Str1
+Idx0Arr2,    DSA        Str2Arr     // assign label for 1st idx of Str2
+Idx0Arr3,    DSA        Str3Arr     // assign label for 1st idx of Str3
+Incr,        Dec        001         // Increment val for hex code arrays
+nth,         Hex        000         // Store indices of hex codes arrays
+             End        Start
