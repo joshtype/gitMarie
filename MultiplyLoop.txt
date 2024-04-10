@@ -1,8 +1,8 @@
-// PROG5.max - Joshua Gregory (Mar. 2024)
-    // Take inputs for M1 & M2. Halt if M1 input == 0. M2 can be any integer.
-    // Inputs are factors for PROD. Get positive/absolute value for negative factors.
-    // Track number of negative factors. If 1 factor is negative, PROD is negative.
-    // Output original factors and product.
+// MultiplyLooop.max - Joshua Gregory (Mar 2024)
+    // Takes inputs for M1 & M2. Halts if M1 input == 0 while M2 can be any integer.
+    // Determines absolute value for negative inputs & tracks number of negatives.
+    // M1 & M2 are factors for PROD. If one factor is negative, PROD = negative.
+    // Outputs original factors M1 & M2 and signed product PROD.
 
 Start,          JnS            GetMP1       // Input, halt if 0, sign, abs value if neg
                 JnS            GetMP2       // Input, sign, abs value if neg

@@ -1,9 +1,9 @@
 // PROG4.max - Joshua Gregory (Mar. 2024)
-    // Using only one Input OpCode, prompt input values for A, B. 
-    // Halt if A == 0. Reprompt for A or B if A > 94 or B > A.
-    // Add B + 4 to get value for S. Check S parity. If odd, add S + 1. 
-    // Sub A - S to get value for N. Print each variable separately.
-    // Restart program until A input == 0.
+    // Using only one Input OpCode, prompts input values for variables A & B. 
+    // Halts only if A == 0. Reprompts for A if A > 94 & for B if B > A.
+    // Adds B + 4 to get S. Checks S parity & adds S + 1 if S = odd.
+    // Subtracts A - S to get value for N. Outputs each variable.
+    // Restarts & continues to run until A input == 0.
 
 Start,        JnS            GetA         // Subr 0: Halt if A <= 0, input A until A <= 94
               JnS            GetB         // Subr 1: Input B until B <= A

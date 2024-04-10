@@ -1,8 +1,8 @@
-// CompareIncrement.max - Joshua Gregory (Feb. 2024)
-    // Without any subroutines, take input, store as Max. Halt if Max <= 0.
-    // Compare Max vs Sum. If Sum < Max, take input Incr to increment Sum.
-    // Add Sum + Incr. Output each incremented Sum. Loop until Sum > Max.
-    // Restart program, halting if Max <= 0.
+// CompareIncrement.max - Joshua Gregory (Feb 2024)
+    // Without subroutines, takes input & stores as Max, halting only if Max <= 0.
+    // Compares Max vs Sum. If Sum < Max, takes input (Incr) to increment Sum.
+    // Adds Sum + Incr. Outputs the incremented Sums. Loops until Sum > Max.
+    // Program restarts and continues to run until Max input <= 0.
 
 Start,      Clear                // Start program, Set AC = 0
             Store      Sum       // Sum = AC

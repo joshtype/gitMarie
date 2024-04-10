@@ -1,5 +1,5 @@
 // Subroutine Practice - Joshua Gregory (Feb 2024)
-
+    // Practice writing MARIE subroutines.
 Start,         Input
                SkipCond      800
                Halt                  // halt if input !> 0
@@ -10,14 +10,11 @@ Start,         Input
                Store         Z       // executes from here after subroutine
                Output
                Jump          Start
-
-// subroutine
+// Subroutine
 AddX,          Hex           0       // jumps and skips this line
                Add           X       // executes from here when called
                JumpI         AddX    // exit subroutine
-
 X,             Dec           0
 Y,             Dec           0
 Z,             Dec           0
-
                End           Start
